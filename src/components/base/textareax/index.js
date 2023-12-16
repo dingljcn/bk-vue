@@ -1,7 +1,12 @@
 export default {
     template: `
         <div class="dinglj-v-ctl dinglj-v-input textarea" :caption="caption" :style="getStyle()" :id="id">
-            <input type="textarea" :placeholder="placeholder" v-model="value" @input="setValue(value, 'input')" @blur="setValue(value, 'change')" @change="setValue(value, 'change')"/>
+            <textarea :placeholder="placeholder" 
+                v-model="value" 
+                @input="setValue(value, 'input')" 
+                @blur="setValue(value, 'change')" 
+                @change="setValue(value, 'change')">
+            </textarea>
         </div>`,
     mounted() {
         this.$emit('mounted', this.id);

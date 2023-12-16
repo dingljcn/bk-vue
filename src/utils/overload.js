@@ -102,6 +102,9 @@ defunc(window.dinglj, 'getVal', (data, path, _default) => {
 
 /** 获取配置, 如果取不到则返回默认值, 并根据参数确认是否要报错 */
 defunc(window.dinglj, 'getVal', (data, path, _default, error) => {
+    if (data == null || data == undefined) {
+        return _default;
+    }
     let result = data;
     for (let propName of path.split('.')) {
         result = result[propName];

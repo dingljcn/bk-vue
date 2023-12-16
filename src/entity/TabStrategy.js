@@ -9,7 +9,7 @@ export class TabStrategy {
         if (isMatch) {
             if (this.func) {
                 return this.func(groupName, ticket);
-            } else if (this.expectValue.includesIgnoreCase(ticket[this.fieldKey])) {
+            } else if (this.expectValue.includesIgnoreCase(ticket.get(this.fieldKey))) {
                 return this.tabName;
             }
         }

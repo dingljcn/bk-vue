@@ -5,7 +5,7 @@ export class OrderTicket {
             if (this.func) {
                 return this.func(groupName, tabName, ticket1, ticket2);
             } else {
-                return dinglj.compareStringByArray(this.expectValue, ticket1[this.fieldKey], ticket2[this.fieldKey]);
+                return dinglj.compareStringByArray(this.expectValue, ticket1.get(this.fieldKey), ticket2.get(this.fieldKey));
             }
         }
     }

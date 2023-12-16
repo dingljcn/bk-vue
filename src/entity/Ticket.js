@@ -34,7 +34,10 @@ export class Ticket {
         }
         return key;
     }
-    constructor(element) {
+    constructor(element = null) {
+        if (element == null) {
+            return;
+        }
         const info = dinglj.getStorage('dinglj-v-ticket-info', {});
         for (let cell of element.children) {
             const key = cell.className;
@@ -44,6 +47,18 @@ export class Ticket {
                 this.set('dinglj_note', info[value].note);
             }
         }
+    }
+    static forLocalTest(element) {
+        let ticket = new Ticket();
+        const info = dinglj.getStorage('dinglj-v-ticket-info', {});
+        for (let key of Object.keys(element)) {
+            const value = element[key];
+            ticket.set(key, value);
+            if ('id'.equalsIgnoreCase(key) && info[value]) {
+                ticket.set('dinglj_note', info[value].note);
+            }
+        }
+        return ticket;
     }
     set(key, value) {
         if (Ticket.fieldNames.includesIgnoreCase(key)) {

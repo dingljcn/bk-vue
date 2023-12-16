@@ -20,7 +20,7 @@ export default {
     },
     computed: {
         type() { // 按钮类型
-            return ['primary', 'warn', 'error'].includesIgnoreCase(this.xType) ? this.xType : 'primary';
+            return ['primary', 'warn', 'error', 'cancel'].includesIgnoreCase(this.xType) ? this.xType : 'primary';
         },
         size() { // 按钮大小
             return ['small', 'normal', 'big'].includesIgnoreCase(this.xSize) ? this.xSize : 'normal';
@@ -31,7 +31,10 @@ export default {
             const result = {
                 'dinglj-v-btn': true, 
                 'dinglj-v-ctl': true,
-                'primary': this.type.equalsIgnoreCase('primary')
+                'primary': this.type.equalsIgnoreCase('primary'),
+                'cancel': this.type.equalsIgnoreCase('cancel'),
+                'warn': this.type.equalsIgnoreCase('warn'),
+                'error': this.type.equalsIgnoreCase('error'),
             };
             return result;
         },

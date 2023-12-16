@@ -3,7 +3,7 @@ export class GroupStrategy {
     exec(ticket, fieldKey) {
         if (this.func) {
             return this.func(ticket, fieldKey);
-        } else if (this.fieldKey == fieldKey && this.expectValue.includesIgnoreCase(ticket[fieldKey])) {
+        } else if (this.fieldKey == fieldKey && this.expectValue.includesIgnoreCase(ticket.get(fieldKey))) {
             return this.groupName;
         }
         return '';

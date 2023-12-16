@@ -2,7 +2,6 @@ import './overload.js';
 import './extensions.js';
 import './msg-queue.js';
 import './msg-tips.js';
-import './modal.js';
 import './right-click.js';
 
 import { createApp } from './vue.js';

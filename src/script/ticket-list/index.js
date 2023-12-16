@@ -1,13 +1,13 @@
 import './read-config.js';
 import '../../utils/index.js';
-import './entity/GroupStrategy.js';
-import './entity/DataFilter.js';
-import './entity/TabStrategy.js';
-import './entity/OrderTicket.js';
+import '../../entity/GroupStrategy.js';
+import '../../entity/DataFilter.js';
+import '../../entity/TabStrategy.js';
+import '../../entity/OrderTicket.js';
 import vuefilter from './filter.js';
+import mymodal from './modal.js';
 import { buildTicketRightMenu } from './utils.js';
-import { Ticket } from './entity/Ticket.js';
-
+import { Ticket } from '../../entity/Ticket.js';
 dinglj.linkCss('assets/css/utils.css');
 dinglj.linkCss('assets/css/vue.css');
 dinglj.linkCss('src/script/ticket-list/index.css');
@@ -39,6 +39,7 @@ if (mainElement) {
             </template>
             <template v-slot:after></template>
         </navigatorview>
+        <mymodal :display="modal.display" @on-close="modal.display = false" :parent="this" :ticket="modal.ticket"></mymodal>
     </div>`;
 }
 
@@ -47,13 +48,16 @@ createVue({
         return {
             constant: {
                 storage: 'dinglj-v-ticket-list-storage',
-                ticketInfo: 'dinglj-v-ticket-info',
             },
             filter: {},
             tops: undefined,
             newTickets: undefined,
             localStorage: undefined,
             myTickets: undefined,
+            modal: {
+                display: false,
+                ticket: null,
+            }
         }
     },
     mounted() {
@@ -89,7 +93,7 @@ createVue({
     methods: {
         /**更新概述单元格的内容 */
         updateSummary(ticket) {
-            dinglj.byClass('dinglj-v-cell id').filter(e => e.innerText == ticket.id).forEach(e => {
+            dinglj.byClass('dinglj-v-cell id').filter(e => e.innerText == ticket.get('id')).forEach(e => {
                 let summary = dinglj.findBroByClass(e, 'summary');
                 if (summary) {
                     summary.innerHTML = this.getSummary(ticket);
@@ -99,13 +103,13 @@ createVue({
         /** 拼接概述单元格的内容 */
         getSummary(ticket) {
             let html = '';
-            if (this.getNewTickets().includes(ticket.id)) {
+            if (this.getNewTickets().includes(ticket.get('id'))) {
                 html += '<span class="ticket-list-new-ticket">[new]</span>';
             }
-            if (this.tops.includes(ticket.id)) {
+            if (this.tops.includes(ticket.get('id'))) {
                 html += '<span class="ticket-list-top-ticket">[top]</span>';
             }
-            html += `<span title="${ ticket.summary }">${ ticket.summary }</span>`;
+            html += `<span title="${ ticket.get('summary') }">${ ticket.get('summary') }</span>`;
             return html;
         },
         /** 获取单元格的内容 */
@@ -113,7 +117,7 @@ createVue({
             if ('summary'.equalsIgnoreCase(columnKey)) {
                 return this.getSummary(ticket); // 概述单元格特殊处理
             }
-            return ticket[columnKey];
+            return ticket.get(columnKey);
         },
         /** 根据变更号打开变更 */
         openTicketById(id) {
@@ -123,7 +127,7 @@ createVue({
         /** 将变更标记为已读 */
         setOpended(ticketId) {
             const ticket = this.getTicketById(ticketId);
-            if (ticket.owner == this.whoami && this.getNewTickets().includes(ticketId)) {
+            if (ticket.get('owner') == this.whoami && this.getNewTickets().includes(ticketId)) {
                 this.getNewTickets().remove(ticketId); // 移除元素
                 this.updateSummary(ticket); // 更新页面
                 // 更新本地缓存
@@ -136,7 +140,7 @@ createVue({
         /** 将变更标记为未读 */
         setUnOpen(ticketId) {
             const ticket = this.getTicketById(ticketId);
-            if (ticket.owner == this.whoami && !this.getNewTickets().includes(ticketId)) {
+            if (ticket.get('owner') == this.whoami && !this.getNewTickets().includes(ticketId)) {
                 this.getNewTickets().pushNew(ticketId); // 添加元素
                 this.updateSummary(ticket); // 更新页面
                 // 更新本地缓存
@@ -198,10 +202,10 @@ createVue({
                     const orderStrategys = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'strategy.order.ticket', []);
                     // 然后对变更进行排序
                     list.sort((t1, t2) => {
-                        if (this.isTop(t1.id) ^ this.isTop(t2.id)) {
-                            if (this.isTop(t1.id)) {
+                        if (this.isTop(t1.get('id')) ^ this.isTop(t2.get('id'))) {
+                            if (this.isTop(t1.get('id'))) {
                                 return -1;
-                            } else if (this.isTop(t2.id)) {
+                            } else if (this.isTop(t2.get('id'))) {
                                 return 1;
                             }
                         }
@@ -236,7 +240,7 @@ createVue({
             let columnKeys = [];
             const filters = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'strategy.colFilter', []);
             // 根据列的过滤策略进行过滤
-            for (let column of Object.keys(everyTab[0])) {
+            for (let column of Ticket.fieldNames) {
                 let ignore = false;
                 for (const filter of filters) {
                     if (filter.exec(groupName, tabName, everyTab, null, column)) {
@@ -260,7 +264,7 @@ createVue({
             if (typeof obj == 'string') {
                 return this.getTops().includesIgnoreCase(obj);
             } else {
-                return this.getTops().includesIgnoreCase(obj.id);
+                return this.getTops().includesIgnoreCase(obj.get('id'));
             }
         },
         /** 本地缓存 */
@@ -288,7 +292,7 @@ createVue({
                 return this.newTickets;
             }
             const myTickets = this.getMyTickets();
-            this.newTickets = this.originData.filter(i => i.owner == this.whoami && !myTickets.includesIgnoreCase(i.id)).map(i => i.id);
+            this.newTickets = this.originData.filter(i => i.get('owner') == this.whoami && !myTickets.includesIgnoreCase(i.get('id'))).map(i => i.get('id'));
             return this.newTickets;
         },
         /** 获取我的变更 */
@@ -317,21 +321,23 @@ createVue({
                 defaultValue = (regExp.exec(window.location.href))[1]; // url 参数
             }
             const defaultColumns = ['component', 'owner', 'status']; // 如果既没有配置, 也没有 url 参数, 则从这里面选一个存在的
-            const columns = Object.keys(this.originData[0]); // 所有显示出来的列
-            let groupColumn = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'groupBy', defaultValue, true, false);
+            let firstLevel = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'groupBy', defaultValue, true, false);
+            if (firstLevel && !defaultColumns.includesIgnoreCase(firstLevel)) {
+                defaultColumns.unshift(firstLevel);
+            }
             for (let tmp of defaultColumns) {
-                if (columns.includesIgnoreCase(tmp)) {
-                    groupColumn = tmp;
-                    break;
+                if (Object.keys(this.originData[0]).includesIgnoreCase(tmp)) {
+                    return tmp;
                 }
             }
-            return groupColumn;
         },
         /** 纯天然无污染的源数据 */
         originData() {
             let result = [];
             if (dinglj.isDev()) {
-                result = readData(); // 用于本地测试, 本地会通过这个方法提供数据
+                for (let element of readData()) {
+                    result.push(Ticket.forLocalTest(element));
+                }
             } else {
                 let ticketClass = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'constant.ticketClass', '', false);
                 for (let className of ticketClass) {
@@ -350,10 +356,10 @@ createVue({
             let result = this.originData;
             for (let column of Object.keys(this.originData[0])) {
                 if (this.filter[column]) {
-                    result = result.filter(i => i[column] == this.filter[column]);
+                    result = result.filter(i => i.get(column) == this.filter[column]);
                 }
             }
-            result = result.filter(i => this.filter.keyword ? i.summary.includesIgnoreCase(this.filter.keyword) : true);
+            result = result.filter(i => this.filter.keyword ? (i.get('summary').includesIgnoreCase(this.filter.keyword) || i.get('id').includesIgnoreCase(this.filter.keyword)) : true);
             return result;
         },
         /** 分组数据 */
@@ -363,10 +369,9 @@ createVue({
             }
             if (this.groupColumn) {
                 const result = dinglj.groupBy(this.filterData, this.groupColumn);
-                const fieldList = Object.keys(this.filterData[0]);
                 const strategyList = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'strategy.groupBy', []);
                 for (let ticket of this.filterData) {
-                    for (let fieldKey of fieldList) {
+                    for (let fieldKey of Ticket.fieldNames) {
                         for (let idx = strategyList.length - 1; idx >= 0; idx--) {
                             let groupName = strategyList[idx].exec(ticket, fieldKey);
                             if (groupName) {
@@ -405,6 +410,6 @@ createVue({
         }
     },
     components: {
-        vuefilter
+        vuefilter, mymodal
     }
 }, '#dinglj-main');
