@@ -18,6 +18,8 @@ import inputx from '../components/base/inputx/index.js';
 import combo from '../components/base/combo/index.js';
 import progress from '../components/base/progress/index.js';
 import textareax from '../components/base/progress/index.js';
+import modalx from '../components/base/modalx/index.js';
+import snapscroll from '../components/base/snap-scroll/index.js';
 
 /** 创建 Vue 应用, 并注册组件, 完成挂载对象 */
 window.createVue = function(object, id) {
@@ -34,6 +36,8 @@ window.createVue = function(object, id) {
         .component('combo', combo)
         .component('progressx', progress)
         .component('textareax', textareax)
+        .component('modalx', modalx)
+        .component('snapscroll', snapscroll)
         .component('switchx', switchx);
     app.mount(id);
 };

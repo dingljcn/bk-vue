@@ -110,3 +110,14 @@ defunc(Array.prototype, 'pushNew', function(obj) {
     }
     return this;
 });
+
+/** 如果数组中某个元素的属性是预期值, 则返回 */
+defunc(Array.prototype, 'getIfExist', function(prop, exp) {
+    const result = [];
+    for(let i = 0; i < this.length; i++) {
+        if (this[i][prop] == exp) {
+            result.push(this[i]);
+        }
+    }
+    return result;
+});

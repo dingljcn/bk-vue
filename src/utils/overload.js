@@ -64,8 +64,13 @@ defunc(window.dinglj, 'query', (keyword) => {
 
 /** 根据 class 获取 DOM 元素 */
 defunc(window.dinglj, 'byClass', (keyword) => {
+    return dinglj.byClass(window.document, keyword);
+});
+
+/** 根据 class 获取 DOM 元素 */
+defunc(window.dinglj, 'byClass', (_document, keyword) => {
     let result = [];
-    result.push(...document.getElementsByClassName(keyword));
+    result.push(..._document.getElementsByClassName(keyword));
     return result;
 });
 
@@ -168,12 +173,20 @@ defunc(window.dinglj, 'getConfigOrDefault', (config, defaultConfig, path, _defau
 
 /** 有一个排好序的数组, 给定两个字符串, 比较出这两个字符串的大小 */
 defunc(window.dinglj, 'compareStringByArray', (array, o1, o2) => {
-    let idx1 = array.indexOfIgnoreCase(o1) == -1 ? 9999 : array.indexOfIgnoreCase(o1);
-    let idx2 = array.indexOfIgnoreCase(o2) == -1 ? 9999 : array.indexOfIgnoreCase(o2);
-    if (idx1 == idx2) {
-        return o1 < o2 ? -1 : (o1 > o2 ? 1 : 0);
+    if (array && array.length > 0) {
+        let idx1 = array.indexOfIgnoreCase(o1) == -1 ? 9999 : array.indexOfIgnoreCase(o1);
+        let idx2 = array.indexOfIgnoreCase(o2) == -1 ? 9999 : array.indexOfIgnoreCase(o2);
+        if (idx1 == idx2) {
+            return o1 < o2 ? -1 : (o1 > o2 ? 1 : 0);
+        }
+        return idx1 - idx2;
     }
-    return idx1 - idx2;
+    if (o1 < o2) {
+        return -1;
+    } else if (o1 > o2) {
+        return 1;
+    }
+    return 0;
 });
 
 /** 判断是不是开发模式 */
@@ -225,8 +238,17 @@ defunc(window.dinglj, 'remById', id => {
 
 /** 向对象的某个属性(数组)追加元素 */
 defunc(window.dinglj, 'pushToObj', (obj, fieldName, value) => {
+    dinglj.pushToObj(obj, fieldName, value, false);
+});
+
+/** 向对象的某个属性(数组)追加元素 */
+defunc(window.dinglj, 'pushToObj', (obj, fieldName, value, dontRepeat) => {
     if (obj[fieldName]) {
-        obj[fieldName].push(value);
+        if (dontRepeat) {
+            obj[fieldName].pushNew(value);
+        } else {
+            obj[fieldName].push(value);
+        }
     } else {
         obj[fieldName] = [ value ];
     }

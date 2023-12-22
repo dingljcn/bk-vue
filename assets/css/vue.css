@@ -9,6 +9,10 @@
     --contrl-margin-tb: 0px;
     --contrl-color: #757575;
     --modal-line-height: 30px;
+    --padding: 10px;
+    --margin: 10px;
+    --radius: 5px;
+    --shadow: 0 0 10px -4px grey;
 }
 
 .flex {
@@ -25,12 +29,14 @@
 /****************************************************************** Navigator ******************************************************************/
 
 #dinglj-v-navigator {
-    max-width: 380px;
+    --padding: 5px;
+    max-width: 200px;
     min-width: 180px;
-    box-shadow: 0 0 10px -4px grey;
-    height: calc(100% - 20px);
-    border-radius: 5px;
-    padding: 10px;
+    height: calc(100% - var(--padding) * 2);
+    padding: var(--padding);
+    flex: 1;
+    border: 5px;
+    border-radius: var(--radius);
     overflow: hidden;
 }
 
@@ -43,7 +49,7 @@
     transition: var(--transition);
     transition-timing-function: var(--timing-fun);
     text-indent: 5px;
-    border-radius: 5px;
+    border-radius: var(--radius);
     overflow: hidden;
 }
 
@@ -125,9 +131,9 @@
 /****************************************************************** Navigator View ******************************************************************/
 
 .dinglj-v-navigator-view {
-    --padding: 10px;
+    --padding: 5px;
     padding: var(--padding);
-    width: 100%;
+    width: calc(100% - var(--padding) * 2);
     height: calc(100% - var(--padding) * 2);
     display: flex;
     overflow: hidden;
@@ -140,7 +146,6 @@
     flex: 1;
     overflow: hidden;
     border: 5px;
-    box-shadow: 0 0 10px -4px grey;
     display: flex;
     flex-direction: column;
 }
@@ -279,7 +284,7 @@
     line-height: var(--real-height);
     display: inline-block;
     margin: var(--contrl-margin-tb) 0;
-    border-radius: 5px;
+    border-radius: var(--radius);
     cursor: pointer;
     user-select: none;
     transition: var(--transition);
@@ -437,7 +442,7 @@
     line-height: 24px;
     height: var(--real-height);
     flex: 1;
-    border-radius: 5px;
+    border-radius: var(--radius);
     background: white;
     border: 1px solid rgba(0,0,0,0.1);
     box-sizing: border-box;
@@ -464,7 +469,7 @@
     width: var(--real-width);
     height: var(--real-height);
     padding:  var(--contrl-padding-tb) var(--contrl-padding-lr);
-    border-radius: 5px;
+    border-radius: var(--radius);
     border: 1px solid rgba(0,0,0,0.1);
     background: white;
 }
@@ -478,7 +483,7 @@
     height: var(--real-height);
     padding: var(--contrl-padding-tb) var(--contrl-padding-lr);
     border: var(--contrl-border) solid rgba(0,0,0,0.1);
-    border-radius: 5px;
+    border-radius: var(--radius);
     background: white;
 }
 
@@ -512,7 +517,7 @@
     position: relative;
     cursor: pointer;
     padding: var(--padding);
-    border-radius: 5px;
+    border-radius: var(--radius);
     transition: 0.3s;
     transition-timing-function: var(--timing-fun);
 }
@@ -575,7 +580,6 @@
 }
 
 .dinglj-v-modal-container {
-    --padding: 10px;
     --width: 600px;
     --height: 300px;
     --realWidth: calc(var(--width) - var(--padding) * 2);
@@ -635,10 +639,68 @@
     overflow-y: scroll;
     word-wrap: break-word;
     overflow: hidden;
-    padding: 10px;
+    padding: var(--padding);
     line-height: 24px;
 }
 
 .dinglj-v-modal-btns {
     display: flex;
+}
+
+/****************************************************************** 吸附滚动界面 - Snap Scroll ******************************************************************/
+.dinglj-v-snap-scroll {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    overflow-x: hidden;
+}
+
+.dinglj-v-snap-scroll::-webkit-scrollbar {
+    width: 0;
+}
+
+.dinglj-v-snap-scroll > * {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: var(--padding);
+    overflow: hidden;
+}
+
+.dinglj-v-snap-scroll > .dinglj-v-navigator-view {
+    --padding: 5px;
+    padding: var(--padding);
+    width: calc(100% - var(--padding) * 2);
+    height: calc(100% - var(--padding) * 2);
+    display: flex;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+.dinglj-v-snap-navi {
+    position: fixed;
+    width: auto;
+    height: auto;
+    right: 5px;
+    top: 50%;
+    padding: 5px;
+}
+
+.dinglj-v-snap-navi > div {
+    --len: 8px;
+    width: var(--len);
+    height: var(--len);
+    margin: 5px;
+    overflow: hidden;
+    background: #dde3e9;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.dinglj-v-snap-navi > div.active {
+    background: var(--theme-color);
 }

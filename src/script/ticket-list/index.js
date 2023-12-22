@@ -5,9 +5,8 @@ import '../../entity/DataFilter.js';
 import '../../entity/TabStrategy.js';
 import '../../entity/OrderTicket.js';
 import vuefilter from './filter.js';
-import mymodal from './modal.js';
-import { buildTicketRightMenu } from './utils.js';
-import { Ticket } from '../../entity/Ticket.js';
+import mymodal from '../ticket-modal.js';
+import { afterTableLoad, columnsToDisplay, getCellValue, getLocalStorage, getMyTickets, getNewTickets, getSummary, getTicketById, getTops, groupData, groupNames, isTop, openTicket, readTicket, setOpended, setUnOpen, tabData, updateSummary, whoami } from '../ticket-tool.js';
 dinglj.linkCss('assets/css/utils.css');
 dinglj.linkCss('assets/css/vue.css');
 dinglj.linkCss('src/script/ticket-list/index.css');
@@ -67,8 +66,6 @@ createVue({
         window.displayData = function() {
             return _that;
         }
-        window.dinglj.openTicketById = this.openTicketById;
-        window.dinglj.setOpended = this.setOpended;
         if (this.getNewTickets().length > 0) {
             let msg = `你有 ${ this.getNewTickets().length } 个新变更, 注意查收<div style="margin-top: 10px; display: flex">
             <div style="flex: 1"></div>
@@ -81,227 +78,71 @@ createVue({
             </div>`;
             msg.info(5000);
         }
-        dinglj.msg.on('to-top', (that, ticketId) => {
-            this.localStorage.topTickets.pushNew(ticketId);
-            dinglj.setStorage(this.constant.storage, this.localStorage);
-        });
-        dinglj.msg.on('remove-top', (that, ticketId) => {
-            this.localStorage.topTickets.remove(ticketId);
-            dinglj.setStorage(this.constant.storage, this.localStorage);
-        });
     },
     methods: {
-        /**更新概述单元格的内容 */
+        /**更新概述单元格的内容, to-tool */
         updateSummary(ticket) {
-            dinglj.byClass('dinglj-v-cell id').filter(e => e.innerText == ticket.get('id')).forEach(e => {
-                let summary = dinglj.findBroByClass(e, 'summary');
-                if (summary) {
-                    summary.innerHTML = this.getSummary(ticket);
-                }
-            });
+            return updateSummary(this, ticket);
         },
-        /** 拼接概述单元格的内容 */
+        /** 拼接概述单元格的内容, to-tool */
         getSummary(ticket) {
-            let html = '';
-            if (this.getNewTickets().includes(ticket.get('id'))) {
-                html += '<span class="ticket-list-new-ticket">[new]</span>';
-            }
-            if (this.tops.includes(ticket.get('id'))) {
-                html += '<span class="ticket-list-top-ticket">[top]</span>';
-            }
-            html += `<span title="${ ticket.get('summary') }">${ ticket.get('summary') }</span>`;
-            return html;
+            return getSummary(this, ticket);
         },
-        /** 获取单元格的内容 */
+        /** 获取单元格的内容, to-tool */
         getCellValue(ticket, columnKey) {
-            if ('summary'.equalsIgnoreCase(columnKey)) {
-                return this.getSummary(ticket); // 概述单元格特殊处理
-            }
-            return ticket.get(columnKey);
+            return getCellValue(this, ticket, columnKey);
         },
-        /** 根据变更号打开变更 */
+        /** 根据变更号打开变更, to-tool */
         openTicketById(id) {
-            window.open(`${ this.ticketURL }/${ id.replace('#', '').trim() }`);
-            this.setOpended(id);
+            return openTicket(this, id);
         },
-        /** 将变更标记为已读 */
+        /** 将变更标记为已读, to-tool */
         setOpended(ticketId) {
-            const ticket = this.getTicketById(ticketId);
-            if (ticket.get('owner') == this.whoami && this.getNewTickets().includes(ticketId)) {
-                this.getNewTickets().remove(ticketId); // 移除元素
-                this.updateSummary(ticket); // 更新页面
-                // 更新本地缓存
-                this.localStorage.myTickets.pushNew(ticketId);
-                dinglj.setStorage(this.constant.storage, this.localStorage);
-                return true;
-            }
-            return false;
+            return setOpended(this, ticketId);
         },
-        /** 将变更标记为未读 */
+        /** 将变更标记为未读, to-tool */
         setUnOpen(ticketId) {
-            const ticket = this.getTicketById(ticketId);
-            if (ticket.get('owner') == this.whoami && !this.getNewTickets().includes(ticketId)) {
-                this.getNewTickets().pushNew(ticketId); // 添加元素
-                this.updateSummary(ticket); // 更新页面
-                // 更新本地缓存
-                this.localStorage.myTickets.remove(ticketId);
-                dinglj.setStorage(this.constant.storage, this.localStorage);
-                return true;
-            }
-            return false;
+            return setUnOpen(this, ticketId);
         },
-        /** 根据变更号获取变更 */
+        /** 根据变更号获取变更, to-tool */
         getTicketById(id) {
-            return this.originData[this.originData.indexOfByProp('id', id)];
+            return getTicketById(this, id);
         },
-        /** 表格加载后事件, 绑定点击事件, 右键菜单 */
+        /** 表格加载后事件, 绑定点击事件, 右键菜单, to-tool */
         tableLoaded(id) {
-            const list = dinglj.query(`#${ id } .dinglj-v-tbody .dinglj-v-cell.id`);
-            list.forEach(element => {
-                element.addEventListener('click', () => this.openTicketById(element.innerText.trim()));
-            });
-            const lines = dinglj.query(`#${ id } .dinglj-v-tbody .dinglj-v-tr`);
-            for (let line of lines) {
-                buildTicketRightMenu(this, line, id);
-            }
+            return afterTableLoad(this, id);
         },
-        /** 获取某个分组下的 Tab 页数据 */
+        /** 获取某个分组下的 Tab 页数据, to-tool */
         tabData(groupName) {
-            // 没有数据, 直接返回
-            const groupData = this.groupData[groupName];
-            const result = {};
-            if (!groupData || groupData.length == 0) {
-                return result;
-            }
-            const tabStrategys = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'strategy.tabBy', []);
-            const rowFilters = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'strategy.rowFilter', []);
-            // 遍历每一个 Tab 页策略
-            for (let tabStrategy of tabStrategys) {
-                let tabName = '';
-                let list = []
-                // 根据规则, 将所有符合规则的变更找出来
-                for (let ticket of groupData) {
-                    let tmpName = tabStrategy.exec(groupName, ticket);
-                    if (tmpName) {
-                        tabName = tmpName;
-                        // 根据行过滤器进行二次判断
-                        let ignore = false;
-                        for (let filter of rowFilters) {
-                            if (filter.exec(groupName, tabName, groupData, ticket)) {
-                                ignore = true;
-                                break
-                            }
-                        }
-                        if (!ignore) {
-                            list.push(ticket);
-                        }
-                    }
-                }
-                // 这样就得到了该 tab 页下所有的变更
-                if (tabName && list.length > 0) {
-                    const orderStrategys = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'strategy.order.ticket', []);
-                    // 然后对变更进行排序
-                    list.sort((t1, t2) => {
-                        if (this.isTop(t1.get('id')) ^ this.isTop(t2.get('id'))) {
-                            if (this.isTop(t1.get('id'))) {
-                                return -1;
-                            } else if (this.isTop(t2.get('id'))) {
-                                return 1;
-                            }
-                        }
-                        for (let orderStrategy of orderStrategys) {
-                            let flag = orderStrategy.exec(groupName, tabName, t1, t2);
-                            if (flag != 0) {
-                                return flag;
-                            }
-                        }
-                        return 0;
-                    })
-                    // 最后放入返回结果中
-                    result[tabName] = list;
-                }
-            }
-            return result;
+            return tabData(this, groupName);
         },
         /** 获取某个分组下的 Tab 页名称列表 */
         tabNames(groupName) {
             return Object.keys(this.tabData(groupName));
         },
-        /** 要显示的列 */
+        /** 要显示的列, to-tool */
         columnsToDisplay(groupName, tabName) {
-            const tabData = this.tabData(groupName);
-            if (!tabData) {
-                return [];
-            }
-            const everyTab = tabData[tabName];
-            if (!everyTab || everyTab.length == 0) {
-                return [];
-            }
-            let columnKeys = [];
-            const filters = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'strategy.colFilter', []);
-            // 根据列的过滤策略进行过滤
-            for (let column of Ticket.fieldNames) {
-                let ignore = false;
-                for (const filter of filters) {
-                    if (filter.exec(groupName, tabName, everyTab, null, column)) {
-                        ignore = true;
-                        break;
-                    }
-                }
-                if (!ignore) {
-                    columnKeys.push(column);
-                }
-            }
-            return columnKeys.map(i => {
-                return {
-                    label: Ticket.getCaption(i),
-                    value: i,
-                }
-            })
+            return columnsToDisplay(this, groupName, tabName);
         },
-        /** 判断一个变更是否置顶 */
+        /** 判断一个变更是否置顶, to-tool */
         isTop(obj) {
-            if (typeof obj == 'string') {
-                return this.getTops().includesIgnoreCase(obj);
-            } else {
-                return this.getTops().includesIgnoreCase(obj.get('id'));
-            }
+            return isTop(this, obj);
         },
-        /** 本地缓存 */
+        /** 本地缓存, to-tool */
         getLocalStorage() {
-            if (this.localStorage) {
-                return this.localStorage;
-            }
-            this.localStorage = dinglj.getStorage(this.constant.storage, {
-                topTickets: [],
-                myTickets: [],
-            });
-            return this.localStorage;
+            return getLocalStorage(this);
         },
-        /** 获取要置顶的变更 */
+        /** 获取要置顶的变更, to-tool */
         getTops() {
-            if (this.tops) {
-                return this.tops;
-            }
-            this.tops = this.getLocalStorage().topTickets || [];
-            return this.tops;
+            return getTops(this);
         },
-        /** 获取新的变更 */
+        /** 获取新的变更, to-tool */
         getNewTickets() {
-            if (this.newTickets) {
-                return this.newTickets;
-            }
-            const myTickets = this.getMyTickets();
-            this.newTickets = this.originData.filter(i => i.get('owner') == this.whoami && !myTickets.includesIgnoreCase(i.get('id'))).map(i => i.get('id'));
-            return this.newTickets;
+            return getNewTickets(this);
         },
-        /** 获取我的变更 */
+        /** 获取我的变更, to-tool */
         getMyTickets() {
-            if (this.myTickets) {
-                return this.myTickets;
-            }
-            this.myTickets = this.getLocalStorage().myTickets || [];
-            return this.myTickets;
+            return getMyTickets(this);
         }
     },
     computed: {
@@ -333,20 +174,7 @@ createVue({
         },
         /** 纯天然无污染的源数据 */
         originData() {
-            let result = [];
-            if (dinglj.isDev()) {
-                for (let element of readData()) {
-                    result.push(Ticket.forLocalTest(element));
-                }
-            } else {
-                let ticketClass = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'constant.ticketClass', '', false);
-                for (let className of ticketClass) {
-                    for (let element of dinglj.byClass(className)) {
-                        result.push(new Ticket(element));
-                    }
-                }
-            }
-            return result;
+            return readTicket(window.readData());
         },
         /** 经过过滤器过滤的数据 */
         filterData() {
@@ -362,51 +190,21 @@ createVue({
             result = result.filter(i => this.filter.keyword ? (i.get('summary').includesIgnoreCase(this.filter.keyword) || i.get('id').includesIgnoreCase(this.filter.keyword)) : true);
             return result;
         },
-        /** 分组数据 */
+        /** 分组数据, to-tool */
         groupData() {
-            if (this.filterData.length <= 0) {
-                return {};
-            }
-            if (this.groupColumn) {
-                const result = dinglj.groupBy(this.filterData, this.groupColumn);
-                const strategyList = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'strategy.groupBy', []);
-                for (let ticket of this.filterData) {
-                    for (let fieldKey of Ticket.fieldNames) {
-                        for (let idx = strategyList.length - 1; idx >= 0; idx--) {
-                            let groupName = strategyList[idx].exec(ticket, fieldKey);
-                            if (groupName) {
-                                if (!result[groupName] || !result[groupName].includes(ticket)) {
-                                    dinglj.unshiftToObj(result, groupName, ticket);
-                                }
-                            }
-                        }
-                    }
-                }
-                return result;
-            } else {
-                '未找到任何用于分组的配置'.err();
-                return {};
-            }
+            return groupData(this);
         },
-        /** 分组名称列表 */
+        /** 分组名称列表, to-tool */
         groupNames() {
-            if (this.groupData.length <= 0) {
-                return [];
-            }
-            const result = Object.keys(this.groupData); // 所有分组名
-            const order = dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'strategy.order.group', {}, false); // 获取排序规则
-            result.sort((o1, o2) => {
-                return dinglj.compareStringByArray(order[this.groupColumn], o1, o2);
-            })
-            return result;
+            return groupNames(this);
         },
         /** 获取变更地址 */
         ticketURL() {
             return dinglj.getConfigOrDefault(this.config, this.defaultConfig, 'urls.ticket', '');
         },
-        /** 我的名字 */
+        /** 我的名字, to-tool */
         whoami() {
-            return dinglj.getVal(this.config, 'whoami.zh', '', true);
+            return whoami();
         }
     },
     components: {

@@ -7,9 +7,11 @@ body {
 }
 
 #case-list-dinglj-container {
+    --padding: 5px;
     display: flex;
-    height: calc(100% - 20px);
-    padding: 10px;
+    width: calc(100% - var(--padding) * 2);
+    height: calc(100% - var(--padding) * 2);
+    padding: var(--padding);
 }
 
 #right-of-navigator {

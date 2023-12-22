@@ -1,6 +1,6 @@
-import modalx from "../../components/base/modalx/index.js";
-import textareax from '../../components/base/textareax/index.js';
-import { Ticket } from "../../entity/Ticket.js";
+import modalx from "../components/base/modalx/index.js";
+import textareax from '../components/base/textareax/index.js';
+import { Ticket } from "../entity/Ticket.js";
 
 export default {
     template: `<modalx :display="display" @on-close="$emit('on-close')" v-if="display" width="1000px" height="500px" :on-confirm="confirm">
