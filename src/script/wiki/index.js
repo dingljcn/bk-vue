@@ -27,8 +27,8 @@ if (mainElement) {
             <ticket :class="{ 'ticket-page': true, 'active': flag.detail }" :parent="this">
             </ticket>
         </snapscroll>
-    </div>
-    <!-- <mymodal :display="modal.display" @on-close="modal.display = false" :parent="this" :ticket="modal.ticket"></mymodal> -->`;
+        <mymodal :display="modal.display" @on-close="modal.display = false" :parent="this" :ticket="modal.ticket"></mymodal>
+    </div>`;
 }
 
 createVue({

@@ -38,6 +38,7 @@
     border: 5px;
     border-radius: var(--radius);
     overflow: hidden;
+    box-shadow: var(--shadow);
 }
 
 .dinglj-v-navigator-item {
@@ -148,6 +149,7 @@
     border: 5px;
     display: flex;
     flex-direction: column;
+    box-shadow: var(--shadow);
 }
 
 .dinglj-v-navigator-content {

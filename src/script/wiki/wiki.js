@@ -6,7 +6,7 @@ import { afterTableLoad, getCellValue, parseTicketTime, sortByTime, whoami } fro
 export default {
     template: `<div class="dlj-wiki-page">
         <div class="dlj-wiki-user">
-            <div class="company">{{ config.company }}</div>
+            <div class="company">{{ config.whoami.company }}</div>
             <div class="name zh">{{ config.whoami.zh }}</div>
             <div class="name en">{{ config.whoami.en }}</div>
             <div class="user-info">
