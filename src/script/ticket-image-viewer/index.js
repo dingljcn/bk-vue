@@ -6,43 +6,42 @@ import ivstep from './step.js';
 import ivhistory from './history.js';
 import { buildImageRightMenu, isMatch } from './utils.js';
 
-dinglj.remCss();
-dinglj.linkCss('assets/css/utils.css');
-dinglj.linkCss('assets/css/vue.css');
-dinglj.linkCss('src/script/ticket-image-viewer/index.css');
-dinglj.injectUserCss();
-
-isMatch();
-
-document.body.innerHTML = `<div id="dinglj-main">
-    <div id="iv-toolbar">
-        <div id="iv-options">
-            <div @click="window.open('..')">返回上一层({{ hotKey.back }})</div>
-            <div @click="addStar(display)">添加关注({{ hotKey.addStar }})</div>
-            <div @click="stars.length = 0">清空关注({{ hotKey.cleanStar }})</div>
-            <div @click="history.length = 0">清空历史({{ hotKey.cleanHistory }})</div>
-            <div @click="window.open('test.xls')">下载用例({{ hotKey.downloadCase }})</div>
-            <div @click="window.open('默认步骤')">默认步骤({{ hotKey.defaultStep }})</div>
-            <div @click="window.open('erpLog')">下载用例({{ hotKey.erpLog }})</div>
-            <div @click="window.open('logs')">下载用例({{ hotKey.logs }})</div>
+if (isMatch()) {
+    dinglj.remCss();
+    dinglj.linkCss('assets/css/utils.css');
+    dinglj.linkCss('assets/css/vue.css');
+    dinglj.linkCss('src/script/ticket-image-viewer/index.css');
+    dinglj.injectUserCss();
+    document.body.innerHTML = `<div id="dinglj-main">
+        <div id="iv-toolbar">
+            <div id="iv-options">
+                <div @click="window.open('..')">返回上一层({{ hotKey.back }})</div>
+                <div @click="addStar(display)">添加关注({{ hotKey.addStar }})</div>
+                <div @click="stars.length = 0">清空关注({{ hotKey.cleanStar }})</div>
+                <div @click="history.length = 0">清空历史({{ hotKey.cleanHistory }})</div>
+                <div @click="window.open('test.xls')">下载用例({{ hotKey.downloadCase }})</div>
+                <div @click="window.open('默认步骤')">默认步骤({{ hotKey.defaultStep }})</div>
+                <div @click="window.open('erpLog')">下载用例({{ hotKey.erpLog }})</div>
+                <div @click="window.open('logs')">下载用例({{ hotKey.logs }})</div>
+            </div>
+            <div class="flex"></div>
+            <inputx :placeholder="'输入行数进行跳转(' + hotKey.line + ')'" @on-change="jumpLine" @mounted="emit => ids.lineInput = emit"></inputx>
+            <inputx :placeholder="'输入步数进行跳转(' + hotKey.step + ')'" @on-change="jumpStep" @mounted="emit => ids.stepInput = emit"></inputx>
         </div>
-        <div class="flex"></div>
-        <inputx :placeholder="'输入行数进行跳转(' + hotKey.line + ')'" @on-change="jumpLine" @mounted="emit => ids.lineInput = emit"></inputx>
-        <inputx :placeholder="'输入步数进行跳转(' + hotKey.step + ')'" @on-change="jumpStep" @mounted="emit => ids.stepInput = emit"></inputx>
-    </div>
-    <div id="iv-under-toolbar">
-        <ivline :arrow="arrow"></ivline>
-        <ivstep :arrow="arrow" :tab-panel-id="ids.tabPanelView"></ivstep>
-        <div class="content-view flex">
-            <tabpanelview :names="tabNames" @mounted="tabPanelViewMounted">
-                <div v-for="(src, idx) of images" style="width: 100%; height: 100%; position: relative">
-                    <img :id="getImageId(src, idx)" :src="src"/>
-                </div>
-            </tabpanelview>
+        <div id="iv-under-toolbar">
+            <ivline :arrow="arrow"></ivline>
+            <ivstep :arrow="arrow" :tab-panel-id="ids.tabPanelView"></ivstep>
+            <div class="content-view flex">
+                <tabpanelview :names="tabNames" @mounted="tabPanelViewMounted">
+                    <div v-for="(src, idx) of images" style="width: 100%; height: 100%; position: relative">
+                        <img :id="getImageId(src, idx)" :src="src"/>
+                    </div>
+                </tabpanelview>
+            </div>
+            <ivhistory :arrow="arrow" @on-clicked="data => { display = data; }" :list="history" :tab-panel-id="ids.tabPanelView"></ivhistory>
         </div>
-        <ivhistory :arrow="arrow" @on-clicked="data => { display = data; }" :list="history" :tab-panel-id="ids.tabPanelView"></ivhistory>
-    </div>
-</div>`;
+    </div>`;
+}
 
 createVue({
     data() {

@@ -193,5 +193,6 @@ export function isMatch() {
             return true;
         }
     }
-    throw new Error('截图查看工具暂未匹配当前 url 地址, 你可以修改油猴脚本, 新增 matchList 的元素以进行适配, 如添加后仍无法适配, 请联系我');
+    console.log('截图查看工具暂未匹配当前 url 地址, 你可以修改油猴脚本, 新增 matchList 的元素以进行适配, 如添加后仍无法适配, 请联系我');
+    return false;
 }
