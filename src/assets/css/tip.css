@@ -1,0 +1,54 @@
+/****************************************************************** 弹出的小提示 ******************************************************************/
+
+#dinglj-v-pop-msg-container {
+    position: absolute;
+    left: 50%;
+    width: 300px;
+    transform: translate(-50%, 0%);
+    overflow: hidden;
+    padding: 20px;
+}
+
+.dinglj-v-pop-msg {
+    transition: 1000;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px -3px grey;
+    overflow: hidden;
+    position: relative;
+    z-index: 9999;
+    word-wrap: none;
+    word-break: keep-all;
+    opacity: 0;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.dinglj-v-pop-msg > div {
+    display: inline-block;
+}
+
+.dinglj-v-pop-msg-icon {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 1rem;
+    color: white;
+    font-weight: bold;
+    font-family: consolas;
+    user-select: none;
+    margin-right: 5px;
+}
+
+.dinglj-v-pop-msg-icon.info {
+    background: var(--theme-color);
+}
+
+.dinglj-v-pop-msg-icon.err {
+    background: red;
+}
+
+.dinglj-v-pop-msg-icon.warn {
+    background: rgb(185, 98, 5);
+}

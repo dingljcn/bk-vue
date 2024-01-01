@@ -1,0 +1,4 @@
+typescript/node_modules
+src/script/ticket-image-viewer/read-config.js
+src/script/ticket-list/read-config.js
+src/script/wiki/read-config.js

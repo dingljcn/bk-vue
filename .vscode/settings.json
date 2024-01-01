@@ -1,0 +1,13 @@
+{
+    "files.exclude": {
+        ".vscode": true,
+        "typescript/node_modules": true,
+        "typescript/package-lock.json": true,
+        "typescript/package.json": true,
+        "typescript/tsconfig.json": true,
+        "typescript/webpack": true,
+        "javascript": true,
+        ".gitignore": true,
+        "*.bat": true
+    }
+}

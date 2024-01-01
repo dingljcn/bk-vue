@@ -1,0 +1,10 @@
+{
+    "scripts": {
+        "case": "webpack --config ./webpack/case-list.config.js"
+    },
+    "dependencies": {
+        "ts-loader": "^9.5.1",
+        "typescript": "^5.3.3",
+        "webpack-cli": "^5.1.4"
+    }
+}

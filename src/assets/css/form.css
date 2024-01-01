@@ -1,0 +1,307 @@
+/****************************************************************** 表单控件:通用样式 ******************************************************************/
+.dinglj-v-ctl {
+    vertical-align: middle;
+}
+
+/****************************************************************** 表单控件:输入型通用样式 ******************************************************************/
+/* input 通用的变量 */
+.dinglj-v-input {
+    --margin-tb: 0px;
+    --border: 1px;
+    --height: 0px;
+    --real-height: calc(var(--height) - var(--margin-tb) * 2);
+}
+
+/* input 通用样式, 因为有 caption, 所有上放有较多外边距*/
+.dinglj-v-input {
+    position: relative;
+    display: inline-block;
+    height: var(--real-height);
+    margin-top: 15px;
+    transition: var(--transition);
+}
+
+.dinglj-v-input * {
+    margin: 0;
+    padding: 0;
+}
+
+/* input 的标题 */
+.dinglj-v-input::before {
+    content: attr(caption);
+    color: var(--input-caption-color);
+    position: absolute;
+    left: 5px;
+    top: -13px;
+    font-weight: bold;
+}
+
+/* input 的清空按钮 */
+.dinglj-v-input .clean {
+    display: inline-block;
+    text-align: center;
+    width: var(--delete-icon-width);
+    color: grey;
+    cursor: pointer;
+    user-select: none;
+    /* 清空按钮在内圈, 需要去掉外圈的 padding 和 border */
+    margin: calc((var(--real-height) - var(--delete-icon-width) - var(--padding-tb) * 2 - var(--border) * 2) / 2) 0;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.dinglj-v-input:hover .clean {
+    opacity: 1;
+}
+
+/* input 和 combo 的内圈文本输入框样式 */
+.dinglj-v-input.combo input,
+.dinglj-v-input.text input {
+    /* input 在内圈, 需要去掉外圈的 padding 和 border*/
+    --input-height: calc(var(--real-height) - var(--padding-tb) * 2 - var(--border) * 2);
+    height: var(--input-height);
+    border: none;
+    padding: 0;
+    width: calc(100% - var(--delete-icon-width));
+    vertical-align: top;
+}
+
+/* 鼠标移入时边框变为蓝色*/
+.dinglj-v-input.combo:hover,
+.dinglj-v-input.text:hover,
+.dinglj-v-input.textarea:hover {
+    border: var(--border) solid #136cfc88;
+}
+
+/****************************************************************** 表单控件:Button ******************************************************************/
+/* 按钮变量 */
+.dinglj-v-btn {
+    --border: 1px;
+    --margin-lr: 1px;
+    --padding-lr: 8px;
+    --real-height: calc(var(--height) - var(--margin-tb) * 2);
+    --primary: var(--theme-color);
+    --primary-hover: #3383ec;
+    --primary-active: #004caf;
+    --cancel: red;
+    --cancel-hover: rgb(252, 114, 114);
+    --cancel-active: rgb(189, 0, 0);
+}
+
+/* 按钮样式 */
+.dinglj-v-btn {
+    height: var(--real-height);
+    line-height: calc(var(--real-height) - 2px);
+    display: inline-block;
+    border-radius: var(--radius);
+    cursor: pointer;
+    user-select: none;
+    transition: var(--transition);
+    margin: var(--margin-tb) var(--margin-lr);
+    padding: 0 var(--padding-lr);
+}
+
+/* 主样式颜色 */
+.dinglj-v-btn.primary {
+    color: white;
+    background: var(--theme-color);
+    border: var(--border) solid var(--theme-color);
+}
+
+/* 主样式鼠标移入颜色 */
+.dinglj-v-btn.primary:hover {
+    background: var(--primary-hover);
+    border: var(--border) solid var(--primary-hover);
+}
+
+/* 主样式点击颜色 */
+.dinglj-v-btn.primary:active {
+    background: var(--primary-active);
+    border: var(--border) solid var(--primary-active);
+}
+
+/* 取消样式颜色 */
+.dinglj-v-btn.cancel {
+    color: var(--cancel);
+    background: white;
+    border: var(--border) solid var(--cancel);
+}
+
+/* 取消样式鼠标移入颜色 */
+.dinglj-v-btn.cancel:hover {
+    color: var(--cancel-hover);
+    border: var(--border) solid var(--cancel-hover);
+}
+
+/* 取消样式点击颜色 */
+.dinglj-v-btn.cancel:active {
+    color: var(--cancel-active);
+    border: var(--border) solid var(--cancel-active);
+}
+
+/****************************************************************** 表单控件:Input ******************************************************************/
+
+.dinglj-v-input.text {
+    --padding-lr: 5px;
+    --padding-tb: 1px;
+    width: var(--width);
+    height: var(--real-height);
+    padding:  var(--padding-tb) var(--padding-lr);
+    border-radius: var(--radius);
+    border: 1px solid rgba(0,0,0,0.1);
+    background: white;
+}
+
+/****************************************************************** 表单控件:Switch ******************************************************************/
+
+.dinglj-v-switch {
+    --border: 1px;
+    height: var(--height);
+    padding: var(--padding-tb) 0;
+    display: inline-block;
+    user-select: none;
+}
+
+.dinglj-v-switch > * {
+    display: inline-block;
+    height: var(--height);
+    line-height: var(--height);
+    transform: translate(0px, -2px);
+}
+
+.dinglj-v-switch-btn {
+    /* 按钮在内圈, 需要减去外圈的 padding 和 border */
+    --btn-height: calc(var(--height) - var(--padding-tb) * 2 - var(--border) * 2);
+    width: var(--width);
+    height: var(--btn-height);
+    border-radius: calc(var(--btn-height) / 2);
+    border: var(--border) solid rgba(0,0,0,0.1);
+    line-height: initial;
+    vertical-align: middle;
+    margin: 0 5px;
+    background: #e7e0e0;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.dinglj-v-switch-btn div {
+    --float-width: calc(var(--btn-height) - var(--border) * 2);
+    position: absolute;
+    left: 0;
+    height: var(--float-width);
+    width: var(--float-width);
+    border-radius: 50%;
+    background: white;
+    transition: var(--transition);
+}
+
+.dinglj-v-switch-btn.active {
+    background: var(--theme-color);
+}
+
+.dinglj-v-switch-btn.active div {
+    left: calc(var(--width) - var(--float-width) - var(--border) * 2);
+}
+
+/****************************************************************** 表单控件:Combo ******************************************************************/
+
+.dinglj-v-input.combo {
+    --padding-lr: 5px;
+    --padding-tb: 1px;
+    width: var(--width);
+    height: var(--real-height);
+    padding: var(--padding-tb) var(--padding-lr);
+    border: var(--border) solid rgba(0,0,0,0.1);
+    border-radius: var(--radius);
+    background: white;
+}
+
+.dinglj-v-combo-selections {
+    --padding: 5px;
+    z-index: -1;
+    position: absolute;
+    width: calc(var(--width) - var(--padding) * 2);
+    margin-top: -10px;
+    background: white;
+    padding: var(--padding);
+    box-shadow: 0 0 9px -3px grey;
+    overflow: hidden;
+    height: 0px;
+    opacity: 0;
+    transition: 0.2s;
+    transition-timing-function: var(--timing-fun);
+}
+
+.dinglj-v-input.combo:hover .dinglj-v-combo-selections {
+    margin-top: 2px;
+    z-index: 999;
+    height: auto;
+    max-height: 200px;
+    overflow-y: scroll;
+    opacity: 1;
+    display: block;
+}
+
+.dinglj-v-combo-selection {
+    position: relative;
+    cursor: pointer;
+    padding: var(--padding);
+    border-radius: var(--radius);
+    transition: 0.3s;
+    transition-timing-function: var(--timing-fun);
+}
+
+.dinglj-v-combo-selection:hover {
+    background: rgb(219, 219, 219);
+    text-indent: 7px;
+    font-weight: bold;
+}
+
+.dinglj-v-combo-selection::before {
+    content: '';
+    background: var(--theme-color);
+    position: absolute;
+    width: 3px;
+    height: 60%;
+    top: 20%;
+    left: 5px;
+    opacity: 0;
+    transition: 0.3s;
+    transition-timing-function: var(--timing-fun);
+}
+
+.dinglj-v-combo-selection:hover::before {
+    opacity: 1;
+}
+
+
+/****************************************************************** 表单控件 - Input TextArea ******************************************************************/
+
+.dinglj-v-input.textarea {
+    --padding-tb: 3px;
+    --width: 100%;
+    --height: 100%;
+    --real-height: calc(var(--height) - var(--padding-tb) * 2 - var(--border) * 2);
+    width: var(--width);
+    padding: var(--padding-tb) var(--padding-lr);
+    line-height: 24px;
+    height: var(--real-height);
+    flex: 1;
+    border-radius: var(--radius);
+    background: white;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-sizing: border-box;
+}
+
+.dinglj-v-input.textarea::before {
+    top: -15px;
+}
+
+.dinglj-v-input.textarea textarea {
+    resize: none;
+    width: 100%;
+    height: 100%;
+    border: none;
+    line-height: 24px;
+    font-size: 14px;
+}

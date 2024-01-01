@@ -1,0 +1,98 @@
+/****************************************************************** 全局通用 ******************************************************************/
+:root {
+    /* 默认主题色 */
+    --theme-color: #1267d6;
+    /* 默认动画时间 */
+    --transition: 0.2s;
+    /* 滚动条宽度 */
+    --scrollbar-width: 8px;
+    /* 默认圆角大小 */
+    --radius: 5px;
+    /* 默认阴影 */
+    --shadow: 0 0 10px -4px grey;
+    /* 默认行高 */
+    --line-height: 20px;
+    /* 默认边框宽度 */
+    --border: 0px;
+    /* 内容输入框的名称颜色 */
+    --input-caption-color: #757575;
+    /* 默认字体大小 */
+    --font-size: 14px;
+    /* 内容输入框删除标志的大小 */
+    --delete-icon-width: 15px;
+    /* 上下外边距 */
+    --margin-tb: 0px;
+    /* 左右外边距 */
+    --margin-lr: 0px;
+    /* 上下内边距 */
+    --padding-tb: 0px;
+    /* 左右内边距 */
+    --padding-lr: 0px;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+    background-color: #AAA;
+    border-radius: calc(var(--scrollbar-width) / 2);
+}
+
+/* 设置全局默认样式 */
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    text-decoration: none;
+    box-sizing: border-box;
+    line-height: var(--line-height);
+    font-size: var(--font-size);
+}
+
+/* body 占浏览器整个窗口 100% 的大小, 不需要滚动, 所有内容都在 body 里显示 */
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 辅助样式, 添加后直接拥有 flex: 1 的属性 */
+.dinglj-v-flex {
+    flex: 1;
+}
+
+/* 辅助样式, 添加后无法完全显示的内容将被替换为省略号 */
+.dinglj-v-auto-hidden {
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/****************************************************************** 进度条 - Progress ******************************************************************/
+.dinglj-v-progress-bar {
+    --bg: var(--theme-color);
+}
+
+.dinglj-v-progress-box {
+    height: var(--bar-height);
+    overflow: hidden;
+    background: rgb(240,240,240);
+    border-radius: calc(var(--bar-height) / 2);
+}
+
+.dinglj-v-progress-box > div {
+    height: 100%;
+    background-color: var(--bg);
+    transition: var(--transition);
+}
+
+.dinglj-v-progress-caption.right {
+    display: block;
+    text-align: right;
+}
